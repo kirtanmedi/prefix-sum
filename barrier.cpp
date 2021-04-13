@@ -7,16 +7,18 @@
 namespace synchronization {
    
    barrier::barrier( int numberOfThreads ) {
-      threadCount = numberOfThreads;
-      currCount = 0;
-      sem_init(&mutexSem, 0, 1);
-      sem_init(&phase1, 0, 0);
+      threadCount = numberOfThreads;   //initializing total thread count to thread count specified by user
+      currCount = 0;                   //setting the current executed thread count to 0
+      sem_init(&mutexSem, 0, 1);       //initializing semaphore for synchronization
+      //implementing two phase barrier for reusability
+      sem_init(&phase1, 0, 0);         
       sem_init(&phase2, 0, 1);
 
       return;
    }
 
    barrier::~barrier( ) {
+      //deleting semaphores of barrier 
       sem_destroy(&mutexSem);
       sem_destroy(&phase1);
       sem_destroy(&phase2);
@@ -36,8 +38,6 @@ namespace synchronization {
 
       sem_wait(&phase1);
       sem_post(&phase1);
-
-      //critical point 
 
       sem_wait(&mutexSem);
       currCount--;
